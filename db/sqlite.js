@@ -1,3 +1,4 @@
+// node sqlite.js
 const sqlite3 = require("sqlite3").verbose();
 
 // Connecting to or creating a new SQLite database file
