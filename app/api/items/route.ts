@@ -1,5 +1,5 @@
-import { Item } from "@/app/interface/item";
-import { connectDB } from "@/app/connection/db";
+import { Item } from "@/interface/item";
+import { connectDB } from "@/connection/db";
 
 export async function GET(req: Request, res: Response) {
   const { searchParams } = new URL(req.url)
@@ -24,6 +24,30 @@ export async function GET(req: Request, res: Response) {
 
 
 export async function POST(req: Request, res: Response) {
+  const body = await req.json() as Item;
+  
+  try {
+    // Destructure the body object to extract properties
+    const { name, description, img } = body;
+
+    // Perform data validation if needed
+    if (!name || !description || !img) {
+      throw new Error("Invalid data: name, description, and img are required.");
+    }
+
+    const db = await connectDB();
+    const { lastID } = await db.run('INSERT INTO items (name, description, img) VALUES (?, ?, ?)', [name, description, img]);
+    const newItem: Item = { id: lastID, name, description, img };
+    return Response.json(newItem);
+
+  } catch (error) {
+    console.error("Error fetching items:", error);
+    return new Response("Internal Server Error", {
+      status: 500,
+    });
+  }
+}
+export async function PUT(req: Request, res: Response) {
   const body = await req.json() as Item;
   
   try {
