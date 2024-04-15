@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
+import { IBM_Plex_Sans_Thai } from "@next/font/google";
 import "./globals.css";
-import NextAuthProvider from "@/auth/provider";
+import NextAuthProvider from "@/providers/auth";
+import ResponsiveAppBar from "@/components/nav";
+import FontProvider from "@/providers/font";
 
-const inter = Inter({ subsets: ["latin"] });
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({
+  weight: ["400", "500", "600", "700"],
+  variable: "--ibm-plex-sans-thai",
+  subsets: ["thai", "latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,12 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <NextAuthProvider>
-        <html lang="en">
-          <body className={inter.className}>
+    <NextAuthProvider>
+      <html lang="en">
+        <body className={ibmPlexSansThai.className}>
+          <FontProvider>
+            <ResponsiveAppBar/>
             {children}
-          </body>
-        </html>
-      </NextAuthProvider>
+          </FontProvider>
+        </body>
+      </html>
+    </NextAuthProvider>
   );
 }

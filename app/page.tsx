@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { signIn, signOut, useSession } from "next-auth/react"
-
+import Button from '@mui/material/Button';
 
 export default function Home() {
 
@@ -11,9 +11,9 @@ export default function Home() {
   // console.log(status)
   return (
     <div>Hello world | 
-      <button onClick={() => signIn("google")}>Sign in with Google</button> |
-      <button onClick={() => signOut()}>Sign out with Google</button> |
-      <div>
+      <Button variant="contained" onClick={() => signIn("google")}>Login</Button>
+      <Button variant="contained" onClick={() => signOut()}>Logout</Button>
+      <div className="text-3xl font-bold underline">
         ClientComponent {status}{' '}
         {status === 'authenticated' && session.user?.name}
       </div>
