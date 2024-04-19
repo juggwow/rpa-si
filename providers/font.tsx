@@ -1,7 +1,7 @@
 "use client";
 
-import { NextFontWithVariable } from "@next/font/dist/types";
-import { IBM_Plex_Sans_Thai } from "@next/font/google";
+import { NextFontWithVariable } from "next/dist/compiled/@next/font";
+import { IBM_Plex_Sans_Thai } from "next/font/google";
 import { createContext, PropsWithChildren, useContext } from "react";
 
 

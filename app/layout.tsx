@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
-import { IBM_Plex_Sans_Thai } from "@next/font/google";
+import { IBM_Plex_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import NextAuthProvider from "@/providers/auth";
 import ResponsiveAppBar from "@/components/nav";

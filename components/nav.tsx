@@ -35,6 +35,7 @@ export default function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const { data: session, status } = useSession();
+  // console.log(session);
 
   interface settingPath {
     name: string
@@ -190,13 +191,12 @@ export default function ResponsiveAppBar() {
             </Typography>
           </Link>
 
-
           {/* User Icon */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 { user?.image ?
-                  (<Avatar alt="User Icon" src={user.image} />)
+                  (<Avatar alt="User Icon" src={user.image}/>)
                   :
                   (<Avatar alt="User Icon"/>)
                 }
