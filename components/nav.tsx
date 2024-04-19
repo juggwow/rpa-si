@@ -19,31 +19,50 @@ import { useFontContext } from '@/providers/font';
 import { signIn, signOut, useSession } from "next-auth/react"
 import { useEffect, useState } from 'react';
 import { DefaultUser, User } from 'next-auth';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'
 
+
+interface settingPath {
+  name: string
+  path: string
+}
 
 export default function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const fontCtx = useFontContext();
+  const router = useRouter();
+
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const { data: session, status } = useSession();
 
-  const [settings, setSettings] = useState<String[]>([]);
+  interface settingPath {
+    name: string
+    path: string
+  }
+  const [settings, setSettings] = useState<settingPath[]>([]);
   const [user, setUser] = useState<User>();
 
-  const menus = ['เกี่ยวกับเรา', 'Pricing', 'Blog'];
+  const menus = ['สร้าง Flow', 'หมวดหมู่', 'ชื่นชอบ', 'เกี่ยวกับเรา'];
+  const menusPath = ['/flow/create', '/flow/catagory', '/flow/favorite', '/about-us'];
 
-  const determineSettings = () => {
+
+  const userSettings = () => {
     if (session) {
-      setSettings(['Profile', 'Account', 'Logout']);
+      setSettings([
+        {name: 'Profile', path: '/profile'},
+        {name: 'Account', path: '/account'},
+        {name: 'Logout', path: '/api/auth/signout'},
+      ]);
       const currentUser = session.user as User;
       setUser(currentUser);
     } else {
-      setSettings(['Login']);
+      setSettings([{name: 'Login', path: '/api/auth/signin'}]);
     }
   };
 
   useEffect(() => {
-    determineSettings();
+    userSettings();
   },[session])
 
 
@@ -62,29 +81,57 @@ export default function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleRedirect = async (path: string) => {
+    switch (path) {
+      case '/api/auth/signin':
+        signIn("google");
+        break;
+      case '/api/auth/signout':
+        await signOut({ redirect: true, callbackUrl: "/" });
+        break;
+      default:
+        router.push(path);
+        break;
+    }
+  }
+
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
+    <AppBar position="static" className='bg-gray-800'>
+      <Container maxWidth="xl" >
         {/* Desktop */}
         <Toolbar disableGutters>
-          <CommentIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            RPA-SI
-          </Typography>
+          <Link href={"/"} className='flex justify-center items-center'>
+            <CommentIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 5,
+                display: { xs: 'none', md: 'flex' },
+                fontWeight: 700,
+                letterSpacing: '.1rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+              >
+              RPA-SI
+            </Typography>
+          </Link>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {menus.map((page, index) => (
+              <Button
+                className={`${fontCtx?.ibmPlexSansThai.className} hover:underline`}
+                key={page}
+                onClick={() => handleRedirect(menusPath[index])}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
+          {/* Mobile */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -114,47 +161,35 @@ export default function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {menus.map((page) => (
+              {menus.map((page, index) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center" onClick={() => handleRedirect(menusPath[index])}>
+                    {page}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
 
-          {/* Mobile */}
-          <CommentIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            RPA-SI
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {menus.map((page) => (
-              <Button
-                className={fontCtx?.ibmPlexSansThai.className}
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-          
+          <Link href={"/"} className='flex justify-center items-center'>
+            <CommentIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <Typography
+              variant="h5"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: 'flex', md: 'none' },
+                flexGrow: 1,
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              RPA-SI
+            </Typography>
+          </Link>
+
 
           {/* User Icon */}
           <Box sx={{ flexGrow: 0 }}>
@@ -184,8 +219,10 @@ export default function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center" onClick={() => handleRedirect(setting.path)}>
+                    {setting.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

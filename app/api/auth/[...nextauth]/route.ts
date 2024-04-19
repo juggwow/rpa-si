@@ -11,6 +11,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
+  session: {
+    strategy: 'jwt',
+    maxAge: 15 * 60, // secound
+   },
 };
 
 const handler = NextAuth(authOptions);
